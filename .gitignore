@@ -1,0 +1,122 @@
+# 编译生成文件
+*.o
+*.a
+*.so
+*.elf
+*.img
+*.bin
+*.disasm
+*.map
+*.lst
+*.i
+*.ii
+*.s
+*.S
+
+# 构建输出
+kernel8.*
+kernel.*
+Image
+vmlinux
+System.map
+
+# 临时文件
+*~
+*.swp
+*.swo
+*.swn
+*.orig
+*.rej
+*.bak
+*.backup
+*.patch
+.diff
+*.tmp
+
+# 编辑器文件
+.vscode/
+.vs/
+.idea/
+*.swp
+*~
+.project
+.cproject
+.settings/
+
+# IDE配置
+tags
+TAGS
+cscope.out
+cscope.files
+gtags.files
+GPATH
+GRTAGS
+GSYMS
+
+# 系统文件
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+
+# 文档生成
+*.pdf
+*.html
+*.chm
+*.epub
+*.mobi
+docs/html/
+docs/latex/
+docs/_build/
+
+# 测试文件
+test_*
+*_test
+*.gcda
+*.gcno
+*.gcov
+coverage/
+
+# 日志文件
+*.log
+build.log
+config.log
+*.dmesg
+
+# 配置和缓存
+.config
+.config.old
+.autoconf
+.cache/
+.clangd/
+.compile_commands.json
+
+# 包管理器
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+requirements.txt
+Pipfile.lock
+poetry.lock
+
+# 虚拟环境
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 备份文件
+*.old
+*.orig
+*.rej
+*.*~
+*.*.orig
+*.*.rej
+# QEMU 相关
+qemu.log
+qemu.pid
