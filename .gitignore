@@ -35,6 +35,7 @@ System.map
 
 # 编辑器文件
 .vscode/
+.vscode-ctags
 .vs/
 .idea/
 *.swp

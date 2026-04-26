@@ -14,12 +14,12 @@ LDFLAGS = -nostdlib -T boot/linker.ld -g
 # ========== 3. Files and Directories ==========
 # List all source files
 BOOT_SRC = boot/boot.S
-KERNEL_SRCS = kernel/main.c kernel/kprintf.c
+KERNEL_SRCS = kernel/main.c kernel/kprintf.c kernel/dtb.c
 DRIVER_SRCS = drivers/kuart.c
-TEST_SRCS = test/test_kprintf.c
+
 
 # Convert .c files to .o files
-KERNEL_OBJS = $(KERNEL_SRCS:.c=.o) $(DRIVER_SRCS:.c=.o) $(TEST_SRCS:.c=.o)
+KERNEL_OBJS = $(KERNEL_SRCS:.c=.o) $(DRIVER_SRCS:.c=.o)
 BOOT_OBJ = boot/boot.o
 
 # Final output files

@@ -1,0 +1,9 @@
+------2026-04-25------
+1.read the dtb base address
+2.read the magic number
+3.reverse byte cause the big endian and small endian
+ 
+------2026-04-26------
+1.read all the dtb header items value and printf.
+2.read and record the reserved memory.
+ 

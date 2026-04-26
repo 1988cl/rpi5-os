@@ -114,7 +114,7 @@ int kprintf(const char *format, ...) {
             case 'x':
             case 'X': {
                 unsigned long value = va_arg(args, unsigned int);
-                char buffer[9];
+                char buffer[70];
                 hex_to_char(value, buffer, (*format == 'X'));
                 char *p = buffer;
                 while (*p) {
