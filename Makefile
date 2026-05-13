@@ -14,7 +14,7 @@ LDFLAGS = -nostdlib -T boot/linker.ld -g
 # ========== 3. Files and Directories ==========
 # List all source files
 BOOT_SRC = boot/boot.S
-KERNEL_SRCS = kernel/main.c kernel/kprintf.c kernel/dtb.c
+KERNEL_SRCS = kernel/main.c kernel/kprintf.c kernel/kdtb.c kernel/kstring.c kernel/kmm.c
 DRIVER_SRCS = drivers/kuart.c
 
 
@@ -57,7 +57,6 @@ run: $(IMAGE)
 	qemu-system-aarch64 \
 		-M virt \
 		-cpu cortex-a72 \
-		-m 512M \
 		-display none \
 		-serial stdio \
 		-kernel $(IMAGE)

@@ -1,7 +1,11 @@
-#include "dtb.h"
+#include "kdtb.h"
+#include "kmm.h"
 #include "kprintf.h"
-
+#include "kstring.h"
 struct dtb_reserve_entry rsv_memory_array[RSV_SIZE];
+uint32_t address_cell = 2;
+uint32_t size_cell = 1;
+static node_type_t current_node = NODE_NONE;
 
 void dtb_parser_process(uint64_t dtb_addr) {
     struct dtb_header *header = dtb_parser_init(dtb_addr);
@@ -11,6 +15,9 @@ void dtb_parser_process(uint64_t dtb_addr) {
     }
     uint64_t rsv_memory_addr = dtb_addr + (uint64_t)(dtb_reverse_byte_32(header->off_mem_rsvmap));
     dtb_parser_reserved_memory(rsv_memory_addr);
+    uint64_t dtb_struct_addr = dtb_addr + (uint64_t)(dtb_reverse_byte_32(header->off_dt_struct));
+    uint64_t dtb_strings_addr = dtb_addr + (uint64_t)(dtb_reverse_byte_32(header->off_dt_strings));
+    dtb_parser_struct(dtb_struct_addr, dtb_strings_addr);
 }
 
 struct dtb_header *dtb_parser_init(uint64_t dtb_addr) {
@@ -75,6 +82,75 @@ uint8_t dtb_parser_reserved_memory(uint64_t reserved_memory_address) {
         rsv_addr++;
     }
     return result;
+}
+
+void dtb_parser_struct(uint64_t dtb_struct_addr, uint64_t dtb_strings_addr) {
+    uint32_t *struct_addr_p = (uint32_t *)dtb_struct_addr;
+    char *strings_addr_p = (char *)dtb_strings_addr;
+    while (TRUE) {
+        uint32_t token = dtb_reverse_byte_32(*struct_addr_p);
+        struct_addr_p++;
+
+        switch (token) {
+        case FDT_BEGIN_NODE: {
+            char *node_name = (char *)struct_addr_p;
+            uint32_t name_len = k_strlen(node_name) + 1;
+            kprintf("the node_name is : %s\n", node_name);
+            if (k_str_startwith(node_name, "memory")) {
+                current_node = NODE_MEMORY;
+            }
+            struct_addr_p += (name_len + 3) / 4;
+            break;
+        }
+        case FDT_END_NODE: {
+            current_node = NODE_NONE;
+            break;
+        }
+        case FDT_PROP: {
+            struct dtb_fdt_prop *p_prop = (struct dtb_fdt_prop *)struct_addr_p;
+            uint32_t len = dtb_reverse_byte_32(p_prop->len);
+            uint32_t name_off = dtb_reverse_byte_32(p_prop->nameoff);
+            char *prop_name = strings_addr_p + name_off;
+            struct_addr_p += sizeof(struct dtb_fdt_prop) / 4;
+            // kprintf("the prop name is:%s,the data len is %d\n", prop_name, len);
+
+            if (k_strcmp(prop_name, "#address-cells") == 0) {
+                address_cell = dtb_reverse_byte_32(*struct_addr_p);
+                kprintf("the #address-cells value is %d\n", address_cell);
+            }
+            if (k_strcmp(prop_name, "#size-cells") == 0) {
+                size_cell = dtb_reverse_byte_32(*struct_addr_p);
+                kprintf("the size_cell value is %d\n", size_cell);
+            }
+            if (current_node == NODE_MEMORY && !k_strcmp(prop_name, "reg")) {
+                if (address_cell == 1) {
+                    mm_addr = (uint64_t)(dtb_reverse_byte_32(struct_addr_p[0]));
+                } else if (address_cell == 2) {
+                    mm_addr = ((uint64_t)(dtb_reverse_byte_32(struct_addr_p[0]))) << 32;
+                    mm_addr |= dtb_reverse_byte_32(struct_addr_p[1]);
+                }
+                if (size_cell == 1) {
+                    mm_size = (uint64_t)(dtb_reverse_byte_32(struct_addr_p[address_cell]));
+                } else if (size_cell == 2) {
+                    mm_size = ((uint64_t)(dtb_reverse_byte_32(struct_addr_p[address_cell]))) << 32;
+                    mm_size |= dtb_reverse_byte_32(struct_addr_p[address_cell + 1]);
+                }
+                kprintf("the memory address is %x, the size is %x \n", mm_addr, mm_size);
+            }
+            struct_addr_p += (len + 3) / 4;
+            break;
+        }
+        case FDT_END: {
+            kprintf("the dtb parser done!");
+            return;
+        }
+        case FDT_NOP: {
+            break;
+        }
+        default:
+            break;
+        }
+    }
 }
 
 uint32_t dtb_reverse_byte_32(uint32_t value) {

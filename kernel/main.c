@@ -1,4 +1,4 @@
-#include "dtb.h"
+#include "kdtb.h"
 #include "kprintf.h"
 extern uint64_t dtb_addr;
 

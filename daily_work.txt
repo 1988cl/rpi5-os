@@ -2,8 +2,15 @@
 1.read the dtb base address
 2.read the magic number
 3.reverse byte cause the big endian and small endian
- 
+
 ------2026-04-26------
 1.read all the dtb header items value and printf.
 2.read and record the reserved memory.
- 
+
+------2026-04-27------
+1.start to parse the dt struct block , on the way
+
+------2026-05-13------
+^_^forgot to update this txt during this period
+
+1.complete the dtb parsing. Get the memory address and size for doing the memory management next.
